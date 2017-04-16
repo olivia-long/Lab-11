@@ -1,1 +1,20 @@
-# Lab-11
+recObj = audiorecorder(44100,16,1);
+recordblocking(recObj, 0.5);
+%%
+play(recObj);
+
+%%
+y = getaudiodata(recObj);
+plot(y);
+
+%%
+y_fft = fft(y);
+y_fft = fftshift(y_fft);
+y_fft = abs(y_fft);
+plot(y_fft);
+%%
+
+x = 0:0.001:500;
+s = sin(50*x);
+plot(s)
+sound(s,44100);
