@@ -1,0 +1,36 @@
+%% calibration (sound transmitter)
+
+x = 0:0.01:150;
+s0 = cos(60*x); % frequency for 0
+s1 = cos(80*x); % frequency for 1
+
+sound(s0,44100);
+
+%% calibration (sound receiver)
+
+recObj = audiorecorder(44100,16,1);
+recordblocking(recObj, 1);
+y = getaudiodata(recObj);
+
+%sound intensity threshold
+
+sound_threshold = 0;
+to_fft = 0; %array to store values to be transformed
+for i = 1:length(y)
+    if (y(i) > sound_threshold)
+        to_fft = [to_fft y(i)]; %or to_fft(end+1)=y(i);
+    end
+    
+end
+
+dt = 0.2; %in seconds
+%y_fft = 0; %array holding values of fft of each dt
+freqs = 0; %array holding values of most intense detected frequency
+
+for i = 1: floor(length(to_fft)/(dt*44100)) %dt/44100 is the number of samples in each dt
+    
+    fft = abs(fftshift(fft(to_fft(i:i+dt*44100))));
+    x = find(fft == max(fft)); %temp array holding freqs that have max intensity
+    freqs = [freqs x(1)];
+    
+end
